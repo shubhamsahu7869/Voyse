@@ -1,11 +1,12 @@
 import Itinerary from "../models/Itinerary.js";
 import { askGemini } from "../utils/geminiService.js";
 import { mockItinerary } from "../utils/mockItinerary.js";
+import { normalizeItinerary } from "../utils/itineraryNormalizer.js";
 
 export async function generate(req, res) {
   const { extractedData, documents = [], feedback = "" } = req.body;
   const prompt = `You are a luxury travel concierge. Based on bookings ${JSON.stringify(extractedData)} and feedback ${feedback}, return ONLY valid JSON with title, destination, overview, days, packingList, budgetEstimate, emergencyContacts.`;
-  const itinerary = await askGemini(prompt) || mockItinerary(extractedData || {});
+  const itinerary = normalizeItinerary(await askGemini(prompt) || mockItinerary(extractedData || {}), extractedData);
   const saved = await Itinerary.create({ userId: req.user.id, title: itinerary.title, destination: itinerary.destination, travelDates: extractedData?.travelDates, documents, extractedData, itinerary, tags: ["Island", "Leisure"] });
   res.status(201).json(saved);
 }
