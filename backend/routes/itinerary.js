@@ -1,0 +1,10 @@
+import { Router } from "express";
+import { generate, getOne, list, remove } from "../controllers/itineraryController.js";
+import { protect } from "../middleware/authMiddleware.js";
+const router = Router();
+router.use(protect);
+router.post("/generate", generate);
+router.get("/", list);
+router.get("/:id", getOne);
+router.delete("/:id", remove);
+export default router;
