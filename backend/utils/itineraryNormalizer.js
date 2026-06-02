@@ -18,6 +18,13 @@ function segment(value, fallbackTitle) {
   };
 }
 
+function period(day, name) {
+  if (day[name]) return day[name];
+  if (day.activities?.[name]) return day.activities[name];
+  if (!Array.isArray(day.activities)) return null;
+  return day.activities.find(activity => text(activity.period || activity.timeOfDay).toLowerCase() === name);
+}
+
 export function normalizeItinerary(value = {}, extractedData = {}) {
   const destination = text(value.destination, text(extractedData.destination, "Your destination"));
   return {
@@ -27,10 +34,10 @@ export function normalizeItinerary(value = {}, extractedData = {}) {
     days: (Array.isArray(value.days) ? value.days : []).map((day, index) => ({
       date: text(day.date, extractedData.travelDates?.start),
       dayNumber: Number(day.dayNumber || index + 1),
-      theme: text(day.theme || day.title, `Day ${index + 1}`),
-      morning: segment(day.morning, "Morning at leisure"),
-      afternoon: segment(day.afternoon, "Explore the destination"),
-      evening: segment(day.evening, "Evening at leisure"),
+      theme: text(day.theme || day.title || day.dayTitle, `Day ${index + 1}`),
+      morning: segment(period(day, "morning"), "Morning at leisure"),
+      afternoon: segment(period(day, "afternoon"), "Explore the destination"),
+      evening: segment(period(day, "evening"), "Evening at leisure"),
       tips: (Array.isArray(day.tips || day.localTips) ? day.tips || day.localTips : [day.tips || day.localTips]).map(item => text(item)).filter(Boolean)
     })),
     packingList: (Array.isArray(value.packingList) ? value.packingList : []).map(item => text(item)).filter(Boolean),

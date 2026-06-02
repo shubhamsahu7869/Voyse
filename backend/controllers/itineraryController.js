@@ -5,7 +5,7 @@ import { normalizeItinerary } from "../utils/itineraryNormalizer.js";
 
 export async function generate(req, res) {
   const { extractedData, documents = [], feedback = "" } = req.body;
-  const prompt = `You are a luxury travel concierge. Based on bookings ${JSON.stringify(extractedData)} and feedback ${feedback}, return ONLY valid JSON with title, destination, overview, days, packingList, budgetEstimate, emergencyContacts.`;
+  const prompt = `You are a luxury travel concierge. Based on bookings ${JSON.stringify(extractedData)} and feedback ${feedback}, return ONLY valid JSON with title, destination, overview, days, packingList, budgetEstimate, emergencyContacts. Each days item MUST contain date, dayNumber, theme, morning, afternoon, evening, and tips. Each morning, afternoon, and evening value MUST be an object with time, title, description, and location string fields.`;
   const itinerary = normalizeItinerary(await askGemini(prompt) || mockItinerary(extractedData || {}), extractedData);
   const saved = await Itinerary.create({ userId: req.user.id, title: itinerary.title, destination: itinerary.destination, travelDates: extractedData?.travelDates, documents, extractedData, itinerary, tags: ["Island", "Leisure"] });
   res.status(201).json(saved);
