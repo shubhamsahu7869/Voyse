@@ -24,7 +24,7 @@ Open `http://localhost:5173`. Configure MongoDB before registering an account. T
 
 ## Environment
 
-Backend variables are documented in `backend/.env.example`. Add `MONGODB_URI` and `JWT_SECRET` for live persistence and authentication. Add `GEMINI_API_KEY` to use Gemini itinerary generation; the API uses a polished deterministic fallback when it is omitted.
+Backend variables are documented in `backend/.env.example`. Add `MONGODB_URI` and `JWT_SECRET` for live persistence and authentication. Add `GEMINI_API_KEY` for the required AI document extraction and itinerary generation. The API uses a polished deterministic fallback when it is omitted, which is useful for local UI development but should not be used for the assessment demo.
 
 Frontend variables are documented in `frontend/.env.example`.
 
@@ -50,7 +50,7 @@ Create a free MongoDB Atlas cluster, add a database user, and allow connections 
 3. Enter the required secret values when prompted:
    - `MONGODB_URI`: the MongoDB Atlas connection string
    - `FRONTEND_URL`: temporarily use `http://localhost:5173`
-   - `GEMINI_API_KEY`: optional; omit it to use the deterministic demo fallback
+   - `GEMINI_API_KEY`: required for the assessment demo; create one in Google AI Studio
 4. Deploy and copy the generated API URL, such as `https://voyse-api.onrender.com`.
 5. Verify `https://YOUR-RENDER-URL/api/health` returns `{"status":"ok"}`.
 
